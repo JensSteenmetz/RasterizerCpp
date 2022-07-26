@@ -1,0 +1,291 @@
+{
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "BuildApp",
+            "command": "/usr/bin/clang++",
+            "args": [
+                //The c++ version to use
+                "-std=c++17",
+                "-stdlib=libc++",
+                //Global installation
+                "-g",
+                //Memory error detection
+                "-fsanitize=address",
+                "-fsanitize=undefined",
+                "-fno-sanitize-recover=all",
+                "-fsanitize=float-divide-by-zero",
+                "-fsanitize=float-cast-overflow",
+                "-fno-sanitize=null",
+                "-fno-sanitize=alignment",
+                "-fno-omit-frame-pointer",
+                //Files to compile
+                "${workspaceFolder}/src/*.cpp",
+                //Link GLEW and GLFW
+                "-lglew",
+                "-lglfw3",
+                "-framework",
+                "Cocoa",
+                "-framework",
+                "OpenGL",
+                "-framework",
+                "IOKit",
+                //Include GLM
+                "-I${workspaceFolder}/include/glm-master",
+                //Output
+                "-o",
+                "${workspaceFolder}/build/App/MyApp"
+            ],
+            "dependsOn": [
+                "CreateDirectoryAppMacOS"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "BuildLibraries",
+            "dependsOn": [
+                "BuildGLFWMacOS",
+                "BuildGLEWMacOS"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "BuildGLFWMacOS",
+            "dependsOn": [
+                "CleanGLFWMacOS"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "BuildGLEWMacOS",
+            "dependsOn": [
+                "CleanGLEWMacOS"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "ClearBuildFolder",
+            "command": "rm",
+            "args": [
+                "-rf",
+                "${workspaceFolder}/build"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "ClearApp",
+            "command": "rm",
+            "args": [
+                "-rf",
+                "${workspaceFolder}/build/App"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "ClearGLFWMacOS",
+            "command": "rm",
+            "args": [
+                "-rf",
+                "${workspaceFolder}/build/glfw"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "ClearGLEWMacOS",
+            "command": "rm",
+            "args": [
+                "-rf",
+                "${workspaceFolder}/build/glew"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "CreateDirectoryAppMacOS",
+            "command": "mkdir",
+            "args": [
+                "-p",
+                "${workspaceFolder}/build/App"
+            ],
+            "dependsOn": [
+                "ClearApp"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "CreateDirectoryBuildMacOS",
+            "command": "mkdir",
+            "args": [
+                "-p",
+                "${workspaceFolder}/build"
+            ],
+            "dependsOn": [
+                "ClearBuildFolder"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "CreateDirectoryGLFWMacOS",
+            "command": "mkdir",
+            "args": [
+                "-p",
+                "${workspaceFolder}/build/glfw"
+            ],
+            "dependsOn": [
+                "ClearGLFWMacOS"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "CreateMakeFileGLFWMacOS",
+            "command": "cmake",
+            "args": [
+                "${workspaceFolder}/include/glfw-3.3.8"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build/glfw"
+            },
+            "dependsOn": [
+                "CreateDirectoryGLFWMacOS"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "CompileGLFWMacOS",
+            "command": "make",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}/build/glfw"
+            },
+            "dependsOn": [
+                "CreateMakeFileGLFWMacOS"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "InstallGLFWMacOS",
+            "command": "sudo",
+            "args": [
+                "make",
+                "install"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build/glfw"
+            },
+            "dependsOn": [
+                "CompileGLFWMacOS"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "CleanGLFWMacOS",
+            "command": "make",
+            "args": [
+                "clean"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build/glfw"
+            },
+            "dependsOn": [
+                "InstallGLFWMacOS"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "CopyGLEWMacOS",
+            "command": "cp",
+            "args": [
+                "-R",
+                "${workspaceFolder}/include/glew-2.1.0/.",
+                "${workspaceFolder}/build/glew"
+            ],
+            "dependsOn": [
+                "ClearGLEWMacOS"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "CompileGLEWMacOS",
+            "command": "make",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}/build/glew"
+            },
+            "dependsOn": [
+                "CopyGLEWMacOS"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "InstallGLEWMacOS",
+            "command": "sudo",
+            "args": [
+                "make",
+                "install"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build/glew"
+            },
+            "dependsOn": [
+                "CompileGLEWMacOS"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "CleanGLEWMacOS",
+            "command": "make",
+            "args": [
+                "clean"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build/glew"
+            },
+            "dependsOn": [
+                "InstallGLEWMacOS"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        }
+    ],
+    "version": "2.0.0"
+}
